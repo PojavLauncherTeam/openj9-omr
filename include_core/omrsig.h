@@ -32,6 +32,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#if defined(__ANDROID__)
+#define __THROW
+#endif /* defined(__ANDROID__) */
+
 #if defined(OSX)
 #define __THROW
 #endif /* defined(OSX) */

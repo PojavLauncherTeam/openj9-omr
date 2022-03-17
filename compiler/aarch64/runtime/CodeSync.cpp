@@ -31,7 +31,7 @@ void arm64CodeSync(unsigned char *codeStart, unsigned int codeSize)
    sys_icache_invalidate(codeStart, codeSize);
 #elif defined(__GNUC__)
    // GCC built-in function
-   __builtin___clear_cache(codeStart, codeStart+codeSize);
+   __builtin___clear_cache((char *)codeStart, (char *)(codeStart+codeSize));
 #else
 #error Unsupported platform
 #endif

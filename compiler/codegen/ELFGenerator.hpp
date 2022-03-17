@@ -80,8 +80,12 @@ protected:
     typedef Elf64_Sym  ELFSymbol;
     typedef Elf64_Rela ELFRela;
     typedef Elf64_Off  ELFOffset;
+#ifndef __ANDROID__
 #define ELF_ST_INFO(bind, type) ELF64_ST_INFO(bind, type)
 #define ELF_ST_VISIBILITY(visibility) ELF64_ST_VISIBILITY(visibility)
+#else
+#define ELF_ST_VISIBILITY(other)	((uint32_t)(other) & 3)
+#endif
 #define ELF_R_INFO(bind, type) ELF64_R_INFO(bind, type)
 #define ELFClass ELFCLASS64;
 #else

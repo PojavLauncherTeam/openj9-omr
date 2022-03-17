@@ -1432,7 +1432,11 @@ setup_native_thread(J9ThreadWalkState *state, thread_context *sigContext, int he
 			memcpy(state->current_thread->context, ((OMRUnixSignalInfo *)sigContext)->platformSignalInfo.context, size);
 		} else if (state->current_thread->thread_id == omrthread_get_ras_tid()) {
 			/* return context for current thread */
+#ifndef __ANDROID__
 			getcontext((ucontext_t *)state->current_thread->context);
+#else
+                        printf("Calling unsupported function: getcontext\n");
+#endif
 		} else {
 			memcpy(state->current_thread->context, (void *)data->thread->context, size);
 		}

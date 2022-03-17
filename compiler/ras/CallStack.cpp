@@ -197,7 +197,11 @@ const char *TR_PPCCallStackIterator::getProcedureName()
    }
 
 #elif defined(LINUX)
+#ifndef __ANDROID__
 #include <execinfo.h>
+#else
+#include "execinfo.h"
+#endif
 #include <cxxabi.h>
 
 void TR_LinuxCallStackIterator::printSymbol(int32_t frame, char *sig, TR::Compilation *comp)

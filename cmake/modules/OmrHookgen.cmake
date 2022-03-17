@@ -76,7 +76,7 @@ function(omr_add_hookgen)
 
 	add_custom_command(
 		OUTPUT "${OPT_PRIVATE_DIR}/${private_header}" "${OPT_PUBLIC_DIR}/${public_header}"
-		COMMAND ${OMR_EXE_LAUNCHER} $<TARGET_FILE:hookgen> "${CMAKE_CURRENT_BINARY_DIR}/${input_filename}"
+		COMMAND ${OMR_EXE_LAUNCHER} hookgen "${CMAKE_CURRENT_BINARY_DIR}/${input_filename}"
 		DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${OPT_INPUT}"
 	)
 

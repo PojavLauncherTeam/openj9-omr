@@ -4013,6 +4013,19 @@ error:
 	return rc;
 }
 
+#ifdef __ANDROID__
+int getloadavg(double averages[], int n) {
+  if (n < 0) return -1;
+  if (n > 3) n = 3;
+  struct sysinfo si;
+  if (sysinfo(&si) == -1) return -1;
+  for (int i = 0; i < n; ++i) {
+    averages[i] = (double)si.loads[i] / (double)(1 << SI_LOAD_SHIFT);
+  }
+  return n;
+}
+#endif
+
 intptr_t
 omrsysinfo_get_load_average(struct OMRPortLibrary *portLibrary, struct J9PortSysInfoLoadData *loadAverageData)
 {

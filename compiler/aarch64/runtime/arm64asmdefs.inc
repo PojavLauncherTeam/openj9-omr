@@ -19,7 +19,15 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#if defined(LINUX)
+#if defined(ANDROID)
+#define FUNC_LABEL(x)   x
+	.macro	LOAD_FUNC_PTR_MACRO	reg, label
+	adrp	\reg, :got:\label
+	ldr	\reg, [\reg, :got_lo12:\label]
+	ldr	\reg, [\reg]
+	.endm
+#define LOAD_FUNC_PTR(reg, label)       LOAD_FUNC_PTR_MACRO reg, label
+#elif defined(LINUX)
 #define FUNC_LABEL(x)	x
 #define LOAD_FUNC_PTR(reg, label) \
 	ldr	reg, label
