@@ -120,11 +120,11 @@ omrsig_handler(int sig, void *siginfo, void *uc)
 
 		if (handlerIsFunction(&handlerSlot.secondaryAction)) {
 #if defined(POSIX_SIGNAL)
-#if defined(OSX) || defined(OMRZTPF)
+#if defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__)
 			sigset_t oldMask = {0};
-#else /* defined(OSX) || defined(OMRZTPF)  */
+#else /* defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__)  */
 			sigset_t oldMask = {{0}};
-#endif /* defined(OSX) || defined(OMRZTPF)  */
+#endif /* defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__)  */
 			sigset_t usedMask = handlerSlot.secondaryAction.sa_mask;
 			sigaddset(&usedMask, sig);
 			int ec = pthread_sigmask(SIG_BLOCK, &usedMask, &oldMask);
@@ -139,11 +139,11 @@ omrsig_handler(int sig, void *siginfo, void *uc)
 				|| (handlerSlot.secondaryAction.sa_flags & SA_RESETHAND)
 #endif /* (defined(AIXPPC) || defined(J9ZOS390)) */
 				)) {
-#if defined(OSX) || defined(OMRZTPF)
+#if defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__)
 				sigset_t mask = {0};
-#else /* defined(OSX) || defined(OMRZTPF) */
+#else /* defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__) */
 				sigset_t mask = {{0}};
-#endif /* defined(OSX) || defined(OMRZTPF) */
+#endif /* defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__) */
 				sigemptyset(&mask);
 				sigaddset(&mask, sig);
 				ec = pthread_sigmask(SIG_UNBLOCK, &mask, NULL);
@@ -498,7 +498,11 @@ int __sigactionset(size_t newct, const __sigactionset_t newsets[], size_t *oldct
 		if (!(__SSET_IGINVALID & options)) {
 			for (unsigned int i = 0; i < newct; i += 1) {
 				for (unsigned int j = 0; j < NSIG; j += 1) {
+#if !defined(__ANDROID__)
 					struct sigaction act = {{0}};
+#else
+                                        struct sigaction act = {0};
+#endif
 					act.sa_handler = newsets[i].__sa_handler;
 					act.sa_sigaction = newsets[i].__sa_sigaction;
 					act.sa_flags = newsets[i].__sa_flags;
@@ -548,7 +552,11 @@ int __sigactionset(size_t newct, const __sigactionset_t newsets[], size_t *oldct
 		for (unsigned int i = 0; i < newct; i += 1) {
 			for (unsigned int j = 0; j < NSIG; j += 1) {
 				if (1 == sigismember(&newsets[i].__sa_signals, j)) {
+#if !defined(__ANDROID__)
 					struct sigaction act = {{0}};
+#else
+                                        struct sigaction act = {0};
+#endif
 					act.sa_handler = newsets[i].__sa_handler;
 					act.sa_mask = newsets[i].__sa_mask;
 					act.sa_flags = newsets[i].__sa_flags;
@@ -575,14 +583,14 @@ sighandler_t
 sigset(int sig, sighandler_t disp) __THROW
 {
 	sighandler_t ret = SIG_ERR;
-#if defined(OSX) || defined(OMRZTPF)
+#if defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__)
 	sigset_t mask = {0};
 	sigset_t oldmask = {0};
-#else /* defined(OSX) || defined(OMRZTPF) */
+#else /* defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__) */
 	sigset_t mask = {{0}};
 	sigset_t oldmask = {{0}};
-#endif /* defined(OSX) || defined(OMRZTPF) */
-	struct sigaction oldact = {{0}};
+#endif /* defined(OSX) || defined(OMRZTPF) || defined(__ANDROID__) */
+	struct sigaction oldact = {0};
 
 	if (SIG_HOLD == disp) {
 		/* If disp is SIG_HOLD, mask the signal and return previous. */
@@ -594,7 +602,11 @@ sigset(int sig, sighandler_t disp) __THROW
 		}
 	} else {
 		/* Otherwise, set handler to disp. */
+#ifndef __ANDROID__
 		struct sigaction act = {{0}};
+#else
+                struct sigaction act = {0};
+#endif
 		act.sa_handler = disp;
 		sigemptyset(&act.sa_mask);
 		if (0 != omrsig_sigaction_internal(sig, &act, &oldact, false)) {
@@ -633,8 +645,8 @@ sigignore(int sig) __THROW
 sighandler_t
 bsd_signal(int signum, sighandler_t handler) __THROW
 {
-	struct sigaction act = {{0}};
-	struct sigaction oldact = {{0}};
+	struct sigaction act = {0};
+	struct sigaction oldact = {0};
 	oldact.sa_handler = SIG_DFL;
 	act.sa_handler = handler;
 	act.sa_flags = SA_RESTART;

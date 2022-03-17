@@ -213,7 +213,6 @@ typedef struct J9MemorySegmentList {
 } J9MemorySegmentList;
 
 #if defined(OMR_GC_REALTIME)
-
 typedef struct MM_GCRememberedSet {
 	uintptr_t globalFragmentIndex;
 	uintptr_t preservedGlobalFragmentIndex;

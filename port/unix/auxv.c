@@ -34,7 +34,11 @@
 #include <pthread.h>
 #include <auxv.h>
 #include <errno.h>
+#ifndef __ANDROID__
 #define __set_errno(the_errno)	*__errno_location() = the_errno
+#else
+#define __set_errno(the_errno)	errno = the_errno
+#endif
 
 static char **saved_environ = NULL;
 

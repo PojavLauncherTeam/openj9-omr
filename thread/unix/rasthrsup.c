@@ -26,6 +26,10 @@
 /* this #include defines the buildspec flags */
 #include "omrthread.h"
 
+#ifdef __ANDROID__
+#define __GLIBC_PREREQ(a,b) 1
+#endif
+
 #if defined(LINUX)
 #if __GLIBC_PREREQ(2,4)
 #include <sys/syscall.h>

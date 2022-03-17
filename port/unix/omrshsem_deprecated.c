@@ -1065,7 +1065,10 @@ omrshsem_openSemaphore(struct OMRPortLibrary *portLibrary, intptr_t fd, char *ba
 			/*Use _key for OSX*/
 			if (buf.sem_perm._key != controlinfo->ftok_key)
 #elif defined(AIXPPC)
-			/*Use .key for AIXPPC*/
+			/*Use .key for AIXPPC */
+			if (buf.sem_perm.key != controlinfo->ftok_key)
+#elif defined(__ANDROID__)
+			/*Use .key for ANDROID */
 			if (buf.sem_perm.key != controlinfo->ftok_key)
 #elif defined(J9ZTPF)
 			/*Use .key for z/TPF */

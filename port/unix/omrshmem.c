@@ -1667,6 +1667,9 @@ omrshmem_openSharedMemory (OMRPortLibrary *portLibrary, intptr_t fd, const char 
 #if defined(OSX)
 			/*Use ._key for OSX*/
 			if (buf.shm_perm._key != controlinfo->common.ftok_key)
+#elif defined(__ANDROID__)
+			/*Use .key for ANDROID*/
+			if (buf.shm_perm.key != controlinfo->common.ftok_key)
 #elif defined(AIXPPC)
 			/*Use .key for AIXPPC*/
 			if (buf.shm_perm.key != controlinfo->common.ftok_key)
